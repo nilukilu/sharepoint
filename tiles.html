@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Buttons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .tile-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .tile {
+            width: 150px;
+            height: 100px;
+            background-color: #0078D7; /* Default color (blue) */
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .tile:nth-child(2) {
+            background-color: #A970FF; /* Purple */
+        }
+
+        .tile:nth-child(3) {
+            background-color: #00C3A3; /* Green */
+        }
+
+        .tile:nth-child(4) {
+            background-color: #D2A234; /* Yellow */
+        }
+
+        .tile-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .tile-label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="tile-container">
+        <!-- ERP Tile -->
+        <a href="https://example.com/erp" class="tile">
+            <div class="tile-icon">⚙️</div> <!-- Replace with actual icon -->
+            <div class="tile-label">ERP</div>
+        </a>
+
+        <!-- HRM Tile -->
+        <a href="https://example.com/hrm" class="tile">
+            <div class="tile-icon">👤</div> <!-- Replace with actual icon -->
+            <div class="tile-label">HRM</div>
+        </a>
+
+        <!-- CRM Tile -->
+        <a href="https://example.com/crm" class="tile">
+            <div class="tile-icon">📊</div> <!-- Replace with actual icon -->
+            <div class="tile-label">CRM</div>
+        </a
