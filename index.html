@@ -7,40 +7,76 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
-            background-color: yellow;
+            padding: 0;
             font-family: Arial, sans-serif;
+            background-color: #d2a234; /* Yellow background */
         }
+
         .container {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            padding: 50px;
         }
-        img {
-            width: 150px;
-            height: 150px;
-            margin-right: 20px;
+
+        .content-wrapper {
+            display: flex;
+            max-width: 1200px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        h1 {
-            margin: 0 0 10px;
+
+        .image {
+            flex: 1;
+            background: url('https://via.placeholder.com/600x400') no-repeat center center/cover;
         }
-        p {
-            margin: 5px 0;
+
+        .text-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .text-content h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #000;
+        }
+
+        .text-content p {
+            margin: 20px 0;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .text-content .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #00334e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .text-content .btn:hover {
+            background-color: #005f7f;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="https://via.placeholder.com/150" alt="Sample Image">
-        <div>
-            <h1>Header Text</h1>
-            <p>Body text row 1</p>
-            <p>Body text row 2</p>
-            <p>Body text row 3</p>
-            <p>Body text row 4</p>
-            <p>Body text row 5</p>
-            <p>Body text row 6</p>
-            <p>Body text row 7</p>
+        <div class="content-wrapper">
+            <!-- Image Section -->
+            <div class="image"></div>
+
+            <!-- Text Content -->
+            <div class="text-content">
+                <h1>Tere Tulemast BCS Itera BI Siseveebi</h1>
+                <p>Nobis Nihil Quia. Voluptatem Eos Asp Ernatur Ut Est. Minus Voluptates Tempora Dolorem Voluptatem Veritatis Sint Est Omnis Labore. In Dolorem Quaerat Voluptas Ab Recusandae</p>
+                <a href="#" class="btn">Read More</a>
+            </div>
         </div>
     </div>
 </body>
