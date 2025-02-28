@@ -3,33 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footer with Social Media Icons</title>
-    <script src="https://kit.fontawesome.com/YOUR_FA_KIT.js" crossorigin="anonymous"></script>
+    <title>Simple Social Media Footer</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
 
         .footer {
             background-color: #222;
-            color: white;
+            padding: 15px 0;
             text-align: center;
-            padding: 20px 0;
-            position: relative;
-            bottom: 0;
             width: 100%;
         }
 
         .social-icons {
-            list-style: none;
-            padding: 0;
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin: 10px 0;
+            gap: 20px;
+            padding: 0;
+            margin: 0;
+            list-style: none;
         }
 
         .social-icons li {
@@ -38,13 +34,15 @@
 
         .social-icons a {
             color: white;
-            font-size: 24px;
-            transition: color 0.3s ease;
+            font-size: 18px;
             text-decoration: none;
+            padding: 10px 15px;
+            background-color: #555;
+            border-radius: 5px;
         }
 
         .social-icons a:hover {
-            color: #00A0E6;
+            background-color: #00A0E6;
         }
     </style>
 </head>
@@ -52,12 +50,11 @@
 
     <!-- Footer Section -->
     <footer class="footer">
-        <p>&copy; 2025 Your Company Name. All Rights Reserved.</p>
         <ul class="social-icons">
-            <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-            <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a></li>
-            <li><a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
-            <li><a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a></li>
+            <li><a href="https://facebook.com" target="_blank">Facebook</a></li>
+            <li><a href="https://instagram.com" target="_blank">Instagram</a></li>
+            <li><a href="https://linkedin.com" target="_blank">LinkedIn</a></li>
+            <li><a href="https://youtube.com" target="_blank">YouTube</a></li>
         </ul>
     </footer>
 
