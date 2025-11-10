@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Barcode → PDF (Single HTML)</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121830;
+      --ink: #e8ecf8;
+      --muted: #9aa3b2;
+      --accent: #7c98ff;
+      --accent-2: #4ce0b3;
+      --error: #ff6b6b;
+      --radius: 16px;
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 70% -10%, #1a2455 0%, #0b1020 60%, #0b1020 100%);
+      color: var(--ink);
+      display: grid; place-items: start center; padding: 32px;
+    }
+    .wrap { width: min(1100px, 100%); display: grid; gap: 16px; }
+    .title { font-weight: 800; font-size: clamp(20px, 3vw, 28px); letter-spacing: .4px; }
+    .grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 16px; }
+    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
+    .card { background: linear-gradient(180deg, #141c3f 0%, #111732 100%); border: 1px solid #222b55; border-radius: var(--radius); padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    label { font-size: 12px; color: var(--muted); display: block; margin: 8px 0 6px; }
+    input[type="text"], input[type="number"], select {
+      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid #2b345f; background: #0e1430; color: var(--ink);
+      outline: none; box-shadow: inset 0 0 0 9999px rgba(255,255,255,0);
+    }
+    input[type="checkbox"]{ transform: translateY(1px); }
+    .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    button { cursor: pointer; border: 1px solid #2b345f; background: #0f1533; color: var(--ink); padding: 10px 14px; border-radius: 12px; font-weight: 600; }
+    .primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border: none; color: #0a0f1f; }
+    .ghost { background: #0e1430; }
+    .small { padding: 8px 12px; font-size: 14px; }
+    .preview { display: grid; place-items: center; min-height: 360px; background: #0a0f26; border-radius: 14px; border: 1px dashed #2a3569; }
+    .note { font-size: 12px; color: var(--muted); }
+    .error { color: var(--error); font-weight: 600; margin-top: 8px; min-height: 1.5em; }
+    .footer { font-size: 12px; color: var(--muted); text-align: center; margin-top: 8px; }
+    svg#barcode { width: 100%; height: auto; max-height: 280px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">Barcode → PDF</div>
+    <div class="grid">
+      <section class="card">
+        <form id="form" onsubmit="event.preventDefault()">
+          <label for="value">Barcode content (what to encode)</label>
+          <input id="value" type="text" placeholder="e.g. 5901234123457 or INV-2025-001" value="INV-2025-001" />
+
+          <div class="row">
+            <div>
+              <label for="format">Symbology</label>
+              <select id="format">
+                <option value="CODE128" selected>CODE128 (flexible, default)</option>
+                <option value="CODE39">CODE39</option>
+                <option value="EAN13">EAN-13 (12/13 digits)</option>
+                <option value="EAN8">EAN-8 (7/8 digits)</option>
+                <option value="UPC">UPC (11/12 digits)</option>
+                <option value="ITF">ITF</option>
+                <option value="MSI">MSI</option>
+                <option value="pharmacode">Pharmacode</option>
+              </select>
+            </div>
+            <div>
+              <label for="text">Human‑readable text (below bars)</label>
+              <input id="text" type="text" placeholder="Leave empty to show value" />
+            </div>
+          </div>
+
+          <div class="row-3">
+            <div>
+              <label for="width">Bar width (px)</label>
+              <input id="width" type="number" min="1" step="1" value="2" />
+            </div>
+            <div>
+              <label for="height">Bar height (px)</label>
+              <input id="height" type="number" min="20" step="5" value="120" />
+            </div>
+            <div>
+              <label for="margin">Margin (px)</label>
+              <input id="margin" type="number" min="0" step="2" value="10" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Options</label>
+              <div class="note">
+                <label><input id="displayValue" type="checkbox" checked /> Show text under bars</label>
+                <br/>
+                <label><input id="flat" type="checkbox" /> Flat (no end guards)</label>
+              </div>
+            </div>
+            <div>
+              <label for="copies">PDF: number of copies</label>
+              <input id="copies" type="number" min="1" step="1" value="1" />
+              <div class="note">PDF paper: A4 portrait; barcode is centered.</div>
+            </div>
+          </div>
+
+          <div class="btns">
+            <button class="primary" id="btn-generate" type="button">Generate Preview</button>
+            <button class="ghost" id="btn-clear" type="button">Clear</button>
+            <button class="primary" id="btn-pdf" type="button">Download PDF</button>
+          </div>
+          <div id="msg" class="error"></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="preview" id="preview">
+          <svg id="barcode"></svg>
+        </div>
+        <div class="footer">Tip: For retail/EAN codes, pick EAN‑13 or EAN‑8 and use only digits.</div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <script>
+    const els = {
+      value: document.getElementById('value'),
+      format: document.getElementById('format'),
+      text: document.getElementById('text'),
+      width: document.getElementById('width'),
+      height: document.getElementById('height'),
+      margin: document.getElementById('margin'),
+      displayValue: document.getElementById('displayValue'),
+      flat: document.getElementById('flat'),
+      copies: document.getElementById('copies'),
+      barcode: document.getElementById('barcode'),
+      msg: document.getElementById('msg'),
+      btnGenerate: document.getElementById('btn-generate'),
+      btnClear: document.getElementById('btn-clear'),
+      btnPdf: document.getElementById('btn-pdf'),
+      preview: document.getElementById('preview'),
+    };
+
+    function getOptions(){
+      const value = (els.value.value || '').trim();
+      const format = els.format.value;
+      const text = els.text.value.trim();
+      const opts = {
+        format,
+        lineColor: '#000000',
+        background: '#ffffff00', // transparent in preview
+        width: clamp(parseInt(els.width.value, 10) || 2, 1, 10),
+        height: clamp(parseInt(els.height.value, 10) || 120, 20, 500),
+        margin: clamp(parseInt(els.margin.value, 10) || 10, 0, 100),
+        displayValue: !!els.displayValue.checked,
+        flat: !!els.flat.checked,
+        text: text.length ? text : undefined,
+        fontOptions: 'bold',
+        fontSize: 16,
+      };
+      return { value, opts };
+    }
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function clearPreview(){
+      els.barcode.replaceChildren();
+      els.msg.textContent = '';
+    }
+
+    function render(){
+      clearPreview();
+      const { value, opts } = getOptions();
+      if(!value){ els.msg.textContent = 'Please type something to encode.'; return; }
+      try {
+        JsBarcode(els.barcode, value, opts);
+      } catch (e){
+        els.msg.textContent = e?.message || 'Could not generate barcode. Check your input and symbology.';
+      }
+    }
+
+    async function svgToPngDataUrl(svgEl, scale=3){
+      return new Promise((resolve, reject)=>{
+        try {
+          const xml = new XMLSerializer().serializeToString(svgEl);
+          const svg64 = btoa(unescape(encodeURIComponent(xml)));
+          const src = 'data:image/svg+xml;base64,' + svg64;
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            try {
+              const url = canvas.toDataURL('image/png');
+              resolve(url);
+            } catch(err){ reject(err); }
+          };
+          img.onerror = reject;
+          img.src = src;
+        } catch (err){ reject(err); }
+      });
+    }
+
+    async function downloadPDF(){
+      clearPreview();
+      const { value, opts } = getOptions();
+      if(!value){ els.msg.textContent = 'Please type something to encode.'; return; }
+
+      // First render with white background for clean export
+      const clone = els.barcode.cloneNode(true);
+      clone.id = 'barcode-export';
+      clone.style.position = 'absolute';
+      clone.style.left = '-99999px';
+      document.body.appendChild(clone);
+
+      try {
+        JsBarcode(clone, value, { ...opts, background: '#ffffff' });
+      } catch (e){
+        els.msg.textContent = e?.message || 'Could not generate barcode for PDF.';
+        document.body.removeChild(clone);
+        return;
+      }
+
+      let pngUrl;
+      try { pngUrl = await svgToPngDataUrl(clone, 4); }
+      catch(e){ els.msg.textContent = 'Failed to rasterize barcode.'; document.body.removeChild(clone); return; }
+      document.body.removeChild(clone);
+
+      // Build PDF (A4 portrait in millimeters)
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
+      const page = { w: 210, h: 297 };
+      const copies = Math.max(1, parseInt(els.copies.value, 10) || 1);
+
+      // Calculate image size to fit nicely on page
+      const maxW = 160; // mm
+      const marginTop = 40; // mm
+      const imgProps = await new Promise((res)=>{
+        const im = new Image();
+        im.onload = ()=> res({ w: im.width, h: im.height });
+        im.src = pngUrl;
+      });
+      const scale = maxW / imgProps.w * 25.4 / 96; // convert px to mm using 96dpi heuristic; corrected below
+      // Better: compute mm directly from pixels @ ~96dpi
+      const pxToMm = (px)=> px * 25.4 / 96;
+      const imgWmm = Math.min(maxW, pxToMm(imgProps.w));
+      const imgHmm = pxToMm(imgProps.h) * (imgWmm / pxToMm(imgProps.w));
+
+      for(let i=0;i<copies;i++){
+        if(i>0) doc.addPage();
+        const x = (page.w - imgWmm)/2;
+        const y = marginTop;
+        doc.addImage(pngUrl, 'PNG', x, y, imgWmm, imgHmm, undefined, 'FAST');
+
+        // Optional: add label text under image
+        const label = opts.text ?? value;
+        if(label && opts.displayValue !== false){
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(14);
+          doc.text(label, page.w/2, y + imgHmm + 10, { align: 'center' });
+        }
+      }
+
+      const fileSafe = (opts.text ?? value).replace(/[^a-z0-9_\-]+/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g,'');
+      doc.save(`barcode_${fileSafe || 'label'}.pdf`);
+
+      // Re-render preview for UX
+      render();
+    }
+
+    // Events
+    els.btnGenerate.addEventListener('click', render);
+    els.btnPdf.addEventListener('click', downloadPDF);
+    els.btnClear.addEventListener('click', () => { els.value.value=''; els.text.value=''; clearPreview(); });
+
+    // Live UX: regenerate on changes after short debounce
+    let t;
+    const inputs = ['value','format','text','width','height','margin','displayValue','flat'];
+    inputs.forEach(id => {
+      const el = els[id];
+      el.addEventListener('input', () => { clearTimeout(t); t = setTimeout(render, 250); });
+      el.addEventListener('change', render);
+    });
+
+    // First render
+    render();
+  </script>
+</body>
+</html>
